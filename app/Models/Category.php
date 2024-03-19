@@ -16,4 +16,9 @@ class Category extends Model
     {
         return $this->belongsTo(Admin::class, 'admin_id', 'id');
     }
+
+    public function posts()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

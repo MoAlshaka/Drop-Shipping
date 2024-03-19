@@ -37,7 +37,7 @@ class CategoryController extends Controller
         Category::create([
             'name' => $request->name,
         ]);
-        return redirect()->route('admin.categories.index')->with(['add' => 'Add successfully']);
+        return redirect()->route('categories.index')->with(['add' => 'Add successfully']);
     }
 
     /**
@@ -71,7 +71,7 @@ class CategoryController extends Controller
         $category->update([
             'name' => $request->name,
         ]);
-        return redirect()->route('admin.categories.index')->with(['update' => 'Add successfully']);
+        return redirect()->route('categories.index')->with(['update' => 'Add successfully']);
     }
 
     /**
@@ -79,8 +79,14 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        $category = Category::findorfail($id);
-        $category->delete();
-        return redirect()->route('admin.categories.index')->with(['delete' => 'Delete successfully']);
+        // $category = Category::findorfail($id);
+        // $category->delete();
+        // return redirect()->route('categories.index')->with(['delete' => 'Delete successfully']);
+        try {
+            Category::destroy($id);
+            return redirect()->route('categories.index')->with(['Delete' => 'Delete successfully']);
+        } catch (\Throwable $th) {
+            return redirect()->route('categories.index')->with(['Warning' => 'لا يمكن حذف هذا الحقل لانه مرتيط بحقول أخرى']);
+        }
     }
 }

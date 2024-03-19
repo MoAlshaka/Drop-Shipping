@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\ActiveSellerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
-
+use App\Http\Controllers\Admin\ProductController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,6 +24,14 @@ Route::prefix('admin')->group(function () {
     Route::middleware("auth:admin")->group(function () {
         //Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
+        // products
+        Route::resource('products', ProductController::class);
+        //Categories
+        Route::resource('categories', CategoryController::class);
+        //Sellers
+        Route::get('sellers', [ActiveSellerController::class, 'index'])->name('admin.sellers.index');
+        Route::match(['post', 'put', 'patch'], 'active-sellers/{id}', [ActiveSellerController::class, 'active'])->name('admin.sellers.active');
+
         //logout
         Route::get('logout', [AuthController::class, 'logout'])->name('admin.logout');
     });

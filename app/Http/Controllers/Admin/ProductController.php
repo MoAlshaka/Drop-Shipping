@@ -17,7 +17,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all();
-        return view('admin.product.index', compact('products'));
+        return view('admin.products.index', compact('products'));
     }
 
     /**
@@ -27,7 +27,7 @@ class ProductController extends Controller
     {
         $tags = Product::pluck('tag');
         $categories = Category::all();
-        return view('admin.product.create', compact('categories', 'tags'));
+        return view('admin.products.create', compact('categories', 'tags'));
     }
 
     /**
@@ -35,6 +35,13 @@ class ProductController extends Controller
      */
     public function store(CreateProductRequest $request)
     {
+        // Check if the user is authenticated as an admin
+        if (!auth()->guard('admin')->check()) {
+            // If not authenticated as an admin, redirect with an error message
+            return redirect()->route('admin.login')->with('error', 'You are not authorized to perform this action.');
+        }
+
+
         $image = $request->file('image');
         $imageName = uniqid() . '.' . $image->getClientOriginalExtension();
         $request->image->move(public_path('products/images'), $imageName);
@@ -47,11 +54,12 @@ class ProductController extends Controller
             'image' =>  $imageName,
             'stock' => $request->stock,
             'tag' => $request->tag,
-            'admin_id' => auth()->user()->id,
-
+            'admin_id' => auth()->guard('admin')->user()->id,
         ]);
-        return redirect()->route('admin.product.index')->with('add', 'Product created successfully.',);
+
+        return redirect()->route('products.index')->with('add', 'Product created successfully.');
     }
+
 
     /**
      * Display the specified resource.
@@ -59,7 +67,7 @@ class ProductController extends Controller
     public function show(string $id)
     {
         $product = Product::findorfail($id);
-        return view('admin.product.show', compact('product'));
+        return view('admin.products.show', compact('product'));
     }
 
     /**
@@ -70,7 +78,7 @@ class ProductController extends Controller
         $product = Product::findorfail($id);
         $categories = Category::all();
         $tags = Product::pluck('tag');
-        return view('admin.product.edit', compact('product', 'categories', 'tags'));
+        return view('admin.products.edit', compact('product', 'categories', 'tags'));
     }
 
     /**
@@ -94,7 +102,7 @@ class ProductController extends Controller
             'stock' => $request->stock,
             'tag' => $request->tag,
         ]);
-        return redirect()->route('admin.product.index')->with('update', 'Product updated successfully.')->with('image', $imageName);
+        return redirect()->route('products.index')->with('update', 'Product updated successfully.')->with('image', $imageName);
     }
 
     /**
@@ -103,6 +111,6 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         Product::findorfail($id)->delete();
-        return redirect()->route('admin.product.index')->with('delete', 'Product deleted successfully.');
+        return redirect()->route('admin.products.index')->with('delete', 'Product deleted successfully.');
     }
 }

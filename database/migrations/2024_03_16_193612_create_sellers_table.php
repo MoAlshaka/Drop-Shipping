@@ -15,9 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('address');
             $table->string('password');
             $table->string('phone');
-            $table->string('image');
+            $table->string('image')->nullable(); // Assuming image can be nullable
             $table->tinyInteger('is_active')->default(0);
             $table->string('access_token')->nullable();
             $table->timestamps();

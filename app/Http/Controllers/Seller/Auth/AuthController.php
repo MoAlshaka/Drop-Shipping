@@ -19,7 +19,8 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|max:50',
             'email' => 'required|max:50',
-            'password' => 'required|max:50',
+            'password' => 'required|max:50|min:8',
+            'address' => 'required|max:250',
             'phone' => 'required|max:50',
             'image' => 'required|mimes:png,jpg,jpeg|max:2048',
         ]);
@@ -31,6 +32,7 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => bcrypt($request->password),
             'phone' => $request->phone,
+            'address' => $request->address,
             'image' => $image_name,
 
         ]);
@@ -46,12 +48,22 @@ class AuthController extends Controller
             'email' => 'required|max:50',
             'password' => 'required|max:50',
         ]);
-
+        // Attempt to authenticate the seller
         if (auth()->guard('seller')->attempt(['email' => $request->email, 'password' => $request->password])) {
-            return redirect()->route('seller.dashboard');
+            // If authentication is successful, retrieve the authenticated seller
+            $seller = auth()->guard('seller')->user();
+            // Check if the seller is active
+            if ($seller->is_active == 0) {
+                return redirect()->route('seller.deactivate');
+            } else {
+                // If active, log in the seller and redirect to the dashboard
+                auth()->guard('seller')->login($seller);
+                return redirect()->route('seller.dashboard');
+            }
         } else {
+            // If authentication fails, redirect back with an error message
             return redirect()->back()->with([
-                'error' => 'the email or password is not correct'
+                'error' => 'The email or password is incorrect.'
             ]);
         }
     }
@@ -60,5 +72,11 @@ class AuthController extends Controller
     {
         auth()->logout();
         return redirect()->route('get.seller.login');
+    }
+
+
+    public function deactivate()
+    {
+        return view('seller.auth.deactivate');
     }
 }

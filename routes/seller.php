@@ -20,9 +20,9 @@ Route::prefix('seller')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('seller.register');
     Route::get('/login', [AuthController::class, 'get_seller_login'])->name('get.seller.login');
     Route::post('login', [AuthController::class, 'login'])->name('seller.login');
-    Route::get('active-page', [AuthController::class, 'active_page'])->name('seller.deactivate');
+    Route::get('active-page', [AuthController::class, 'deactivate'])->name('seller.deactivate');
 
-    Route::middleware(['auth:seller', 'auth:is_active'])->group(function () {
+    Route::middleware(['auth:seller', 'is_active'])->group(function () {
         //Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('seller.dashboard');
         //logout

@@ -15,8 +15,8 @@ class ActiveSellerController extends Controller
     }
     public function active(Request $request, $id)
     {
-        $seller = Seller::find($id);
-        $seller->update(['is_active' => $request->is_active]);
+        $seller = Seller::findorfail($id);
+        $seller->update(['is_active' => 1]);
 
         return redirect()->route('admin.sellers.index');
     }
