@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Seller\Auth\AuthController;
 use App\Http\Controllers\Seller\DashboardController;
+use App\Http\Controllers\Seller\LeedController;
+use App\Http\Controllers\Seller\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,6 +27,11 @@ Route::prefix('seller')->group(function () {
     Route::middleware(['auth:seller', 'is_active'])->group(function () {
         //Dashboard
         Route::get('/', [DashboardController::class, 'index'])->name('seller.dashboard');
+        //products
+        Route::get('products', [ProductController::class, 'index'])->name('seller.products.index');
+        Route::get('product/{id}', [ProductController::class, 'show'])->name('seller.product.show');
+        //leeds
+        Route::resource('leads', LeedController::class);
         //logout
         Route::get('logout', [AuthController::class, 'logout'])->name('seller.logout');
     });

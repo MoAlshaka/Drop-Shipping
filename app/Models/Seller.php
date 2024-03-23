@@ -22,4 +22,8 @@ class Seller extends Authenticatable
         'image',
         'access_token',
     ];
+    public function leeds()
+    {
+        return $this->hasMany(Leed::class);
+    }
 }

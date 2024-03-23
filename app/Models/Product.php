@@ -27,4 +27,9 @@ class Product extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function leeds()
+    {
+        return $this->hasMany(Leed::class);
+    }
 }
